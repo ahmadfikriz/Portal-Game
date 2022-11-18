@@ -1,34 +1,73 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpStatus,
+  ParseUUIDPipe,
+  Put,
+} from '@nestjs/common';
 import { LevelService } from './level.service';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Level')
 @Controller('level')
 export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 
   @Post()
-  create(@Body() createLevelDto: CreateLevelDto) {
-    return this.levelService.create(createLevelDto);
+  async create(@Body() createLevelDto: CreateLevelDto) {
+    return {
+      data: await this.levelService.create(createLevelDto),
+      statusCode: HttpStatus.CREATED,
+      message: 'success',
+    };
   }
 
   @Get()
-  findAll() {
-    return this.levelService.findAll();
+  async findAll() {
+    const [data, count] = await this.levelService.findAll();
+
+    return {
+      data,
+      count,
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.levelService.findOne(+id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      data: await this.levelService.findOne(id),
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLevelDto: UpdateLevelDto) {
-    return this.levelService.update(+id, updateLevelDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateLevelDto: UpdateLevelDto,
+  ) {
+    return {
+      data: await this.levelService.update(id, updateLevelDto),
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.levelService.remove(+id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.levelService.remove(id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 }

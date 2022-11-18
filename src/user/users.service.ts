@@ -23,7 +23,7 @@ export class UsersService {
 
     newUser.username = createUserDto.username;
     newUser.password = createUserDto.password;
-    newUser.level = await this.levelService.findByLevelName(createUserDto.levels);
+    newUser.level = await this.levelService.findByLevel(createUserDto.levels);
 
     const result = await this.usersRepository.insert(newUser);
 

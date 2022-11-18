@@ -12,27 +12,97 @@ export class LevelService {
     private levelRepository: Repository<Level>,
   ) {}
 
-  create(createLevelDto: CreateLevelDto) {
-    return 'This action adds a new level';
+  async create(createLevelDto: CreateLevelDto) {
+    const result = await this.levelRepository.insert(createLevelDto);
+
+    return this.levelRepository.findOneOrFail({
+      where: {
+        id: result.identifiers[0].id,
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all level`;
+    return this.levelRepository.findAndCount();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} level`;
+  async findOne(id: string) {
+    try {
+      return await this.levelRepository.findOneOrFail({
+        where: {
+          id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
   }
 
-  update(id: number, updateLevelDto: UpdateLevelDto) {
-    return `This action updates a #${id} level`;
+  async update(id: string, updateLevelDto: UpdateLevelDto) {
+    try {
+      await this.levelRepository.findOneOrFail({
+        where: {
+          id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+
+    await this.levelRepository.update(id, updateLevelDto);
+
+    return this.levelRepository.findOneOrFail({
+      where: {
+        id,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} level`;
+  async remove(id: string) {
+    try {
+      await this.levelRepository.findOneOrFail({
+        where: {
+          id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+
+    await this.levelRepository.delete(id);
   }
 
-  async findByLevelName(name: string) {
+  async findByLevel(name: string) {
     try {
       return await this.levelRepository.findOneOrFail({
         where: {
