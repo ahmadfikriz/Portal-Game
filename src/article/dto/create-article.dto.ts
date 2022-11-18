@@ -21,4 +21,8 @@ export class CreateArticleDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   content: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  viewers: number;
 }

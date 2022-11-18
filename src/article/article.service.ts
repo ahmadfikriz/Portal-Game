@@ -30,6 +30,7 @@ export class ArticleService {
     newArticle.title = createArticleDto.title;
     newArticle.thumbnail = createArticleDto.thumbnail;
     newArticle.content = createArticleDto.content;
+    newArticle.viewers = createArticleDto.viewers;
     newArticle.user = await this.usersService.findByUsername(createArticleDto.username);
     newArticle.category = await this.categoryService.findByCategory(createArticleDto.categories);
 
@@ -44,26 +45,26 @@ relations: ['user', 'category'],
   }
 
   findAll(options: IPaginationOptions): Promise<Pagination<Article>> {
-    const query = this.articleRepository.createQueryBuilder('Article')
-    .innerJoinAndSelect('Article.user', 'user')
-    .innerJoinAndSelect('Article.category', 'category')
-    .orderBy('Article.title', 'ASC');
+    const query = this.articleRepository.createQueryBuilder('article')
+    .innerJoinAndSelect('article.user', 'user')
+    .innerJoinAndSelect('article.category', 'category')
+    .orderBy('article.title', 'ASC');
 
     return paginate<Article>(query, options);
   }
 
   async findArticle(options: IPaginationOptions, search: string,): Promise<Pagination<Article>> {
-    const query = this.articleRepository.createQueryBuilder('Article')
-    .innerJoinAndSelect('Article.user', 'user')
-    .innerJoinAndSelect('Article.category', 'category')
-    .orderBy('Article.title', 'ASC');
+    const query = this.articleRepository.createQueryBuilder('article')
+    .innerJoinAndSelect('article.user', 'user')
+    .innerJoinAndSelect('article.category', 'category')
+    .orderBy('article.title', 'ASC');
 
     if (search) {
  (
       query
-        .where('Article.title LIKE :search', {search: `%${search}%`})
-        .orWhere('Article.user LIKE :search', {search: `%${search}%`})
-        .orWhere('Article.category LIKE :search', {search: `%${search}%`})
+        .where('article.title LIKE :search', {search: `%${search}%`})
+        .orWhere('user.username LIKE :search', {search: `%${search}%`})
+        .orWhere('category.name LIKE :search', {search: `%${search}%`})
     );
 } else {
  (
@@ -73,7 +74,7 @@ relations: ['user', 'category'],
 
 ;
     await query.getMany();
-
+    console.log(query, search)
     return paginate<Article>(query, options);
   }
 

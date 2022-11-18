@@ -24,7 +24,7 @@ import { Article } from './entities/article.entity';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createArticleDto: CreateArticleDto) {
     return {
       data: await this.articleService.create(createArticleDto),
@@ -65,7 +65,7 @@ export class ArticleController {
     );
   }
 
-  @Get('article/:id')
+  @Get(':id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.articleService.findById(id),
@@ -86,7 +86,7 @@ export class ArticleController {
     };
   }
 
-  @Delete('article/:id')
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.articleService.remove(id);
 

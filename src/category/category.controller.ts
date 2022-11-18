@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   Controller,
   Get,
@@ -8,18 +9,23 @@ import {
   Delete,
   HttpStatus,
   ParseUUIDPipe,
+  DefaultValuePipe,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @ApiTags('Category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return {
       data: await this.categoryService.create(createCategoryDto),
@@ -38,6 +44,24 @@ export class CategoryController {
       statusCode: HttpStatus.OK,
       message: 'success',
     };
+  }
+
+  @Get('search')
+  async findCategory(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('search') search: string,
+  ): Promise<Pagination<Category>> {
+    limit = limit > 100 ? 100 : limit;
+
+    return this.categoryService.findCategory(
+      {
+        page,
+        limit,
+        route: 'http://localhost:3222/category/search',
+      },
+      search,
+    );
   }
 
   @Get(':id')

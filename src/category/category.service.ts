@@ -1,5 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -24,6 +29,23 @@ export class CategoryService {
 
   findAll() {
     return this.categoryRepository.findAndCount();
+  }
+
+  async findCategory(
+    options: IPaginationOptions,
+    search: string,
+  ): Promise<Pagination<Category>> {
+    const query = this.categoryRepository.createQueryBuilder('category');
+
+    if (search) {
+      query.where('category.name LIKE :search', { search: `%${search}%` });
+    } else {
+      query.getMany();
+    }
+
+    await query.getMany();
+
+    return paginate<Category>(query, options);
   }
 
   async findOne(id: string) {

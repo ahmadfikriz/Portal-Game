@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createLevelDto: CreateLevelDto) {
     return {
       data: await this.levelService.create(createLevelDto),

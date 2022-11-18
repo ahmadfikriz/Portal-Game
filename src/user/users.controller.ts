@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   Controller,
   Get,
@@ -24,7 +25,7 @@ import { User } from './entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createUserDto: CreateUserDto) {
     return {
       data: await this.usersService.create(createUserDto),
