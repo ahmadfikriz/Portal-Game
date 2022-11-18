@@ -111,4 +111,24 @@ export class UsersService {
 
     await this.usersRepository.delete(id);
   }
+
+async findByUsername(username: string) {
+  try {
+    return await this.usersRepository.findOneOrFail({
+      where: {
+        username,
+      },
+    });
+  } catch (error) {
+    if (error instanceof EntityNotFoundError) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          error: 'Data not found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+}
 }
