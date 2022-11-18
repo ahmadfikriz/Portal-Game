@@ -8,12 +8,19 @@ import {
   Delete,
   ParseUUIDPipe,
   HttpStatus,
+  DefaultValuePipe,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { User } from './entities/user.entity';
 
-@Controller('users')
+@ApiTags('User')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -27,24 +34,44 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    const [data, count] = await this.usersService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<User>> {
+    limit = limit > 100 ? 100 : limit;
 
+    return this.usersService.findAll({
+      page,
+      limit,
+      route: 'http://localhost:3222/user',
+    });
+  }
+
+  @Get(':id')
+  async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
-      data,
-      count,
+      data: await this.usersService.findById(id),
       statusCode: HttpStatus.OK,
       message: 'success',
     };
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return {
-      data: await this.usersService.findOne(id),
-      statusCode: HttpStatus.OK,
-      message: 'success',
-    };
+  @Get('search')
+  async findUsername(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('search') search: string,
+  ): Promise<Pagination<User>> {
+    limit = limit > 100 ? 100 : limit;
+
+    return this.usersService.findUsername(
+      {
+        page,
+        limit,
+        route: 'http://localhost:3222/user/search',
+      },
+      search,
+    );
   }
 
   @Put(':id')

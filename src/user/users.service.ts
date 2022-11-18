@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,6 +7,8 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -32,11 +35,15 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.usersRepository.findAndCount();
+  async findAll(options: IPaginationOptions): Promise<Pagination<User>> {
+    const query = this.usersRepository.createQueryBuilder('user')
+    .innerJoinAndSelect('user.level', 'name')
+    .orderBy('user.username', 'ASC');
+
+    return paginate<User>(query, options);
   }
 
-  async findOne(id: string) {
+  async findById(id: string) {
     try {
       return await this.usersRepository.findOneOrFail({
         where: {
@@ -57,6 +64,30 @@ export class UsersService {
       }
     }
   }
+
+  async findUsername(
+    options: IPaginationOptions,
+    search: string,
+    ): Promise<Pagination<User>> {
+      const query = this.usersRepository.createQueryBuilder('user').innerJoinAndSelect('user.level', 'level');
+
+      if (search) {
+ (
+        query
+          .where('user.username LIKE :search', {search: `%${search}%`})
+          .orWhere('level.name LIKE :search', {search: `%${search}%`})
+      );
+} else {
+ (
+        query.getMany()
+      );
+}
+
+;
+      await query.getMany();
+
+      return paginate<User>(query, options);
+    }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
@@ -110,6 +141,18 @@ export class UsersService {
     }
 
     await this.usersRepository.delete(id);
+  }
+
+  hash(plainPassword) {
+    const hash = bcrypt.hashSync(plainPassword, 20);
+
+    return hash;
+  }
+
+  compare(plainPassword, hash) {
+    const valid = bcrypt.compare(plainPassword, hash);
+
+    return valid;
   }
 
 async findByUsername(username: string) {
