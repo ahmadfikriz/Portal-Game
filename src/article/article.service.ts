@@ -74,7 +74,7 @@ relations: ['user', 'category'],
 
 ;
     await query.getMany();
-    console.log(query, search)
+
     return paginate<Article>(query, options);
   }
 
@@ -84,6 +84,7 @@ relations: ['user', 'category'],
         where: {
           id,
         },
+        relations: ['user', 'category'],
       });
     } catch (e) {
       if (e instanceof EntityNotFoundError) {

@@ -5,10 +5,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  VersionColumn,
   CreateDateColumn,
   ManyToOne,
+  BeforeInsert,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
@@ -41,4 +42,13 @@ export class User {
 
   @ManyToOne(() => Level, (level) => level.id)
   level: Level;
+
+  static password: any;
+  static id: any;
+
+  @BeforeInsert()
+  async setPassword(password: string) {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(password || this.password, salt);
+  }
 }
