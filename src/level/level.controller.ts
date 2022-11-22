@@ -28,7 +28,7 @@ export class LevelController {
     };
   }
 
-  @Get()
+  @Get('getall')
   async findAll() {
     const [data, count] = await this.levelService.findAll();
 
@@ -40,7 +40,7 @@ export class LevelController {
     };
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.levelService.findOne(id),
@@ -49,7 +49,7 @@ export class LevelController {
     };
   }
 
-  @Put(':id')
+  @Put('update/:id')
   async update(
     @Param('id') id: string,
     @Body() updateLevelDto: UpdateLevelDto,
@@ -61,7 +61,7 @@ export class LevelController {
     };
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.levelService.remove(id);
 

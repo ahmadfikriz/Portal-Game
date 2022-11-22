@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   Controller,
   Get,
@@ -33,7 +34,7 @@ export class ArticleController {
     };
   }
 
-  @Get()
+  @Get('getall')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -65,7 +66,7 @@ export class ArticleController {
     );
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.articleService.findById(id),
@@ -74,7 +75,7 @@ export class ArticleController {
     };
   }
 
-  @Put(':id')
+  @Put('update/:id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -86,7 +87,7 @@ export class ArticleController {
     };
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.articleService.remove(id);
 

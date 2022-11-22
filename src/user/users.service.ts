@@ -43,29 +43,6 @@ export class UsersService {
     return paginate<User>(query, options);
   }
 
-  async findById(id: string) {
-    try {
-      return await this.usersRepository.findOneOrFail({
-        where: {
-          id,
-        },
-        relations: ['level'],
-      });
-    } catch (e) {
-      if (e instanceof EntityNotFoundError) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.NOT_FOUND,
-            error: 'Data not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        throw e;
-      }
-    }
-  }
-
   async findUsername(
     options: IPaginationOptions,
     search: string,
@@ -89,6 +66,29 @@ export class UsersService {
 
       return paginate<User>(query, options);
     }
+
+  async findById(id: string) {
+    try {
+      return await this.usersRepository.findOneOrFail({
+        where: {
+          id,
+        },
+        relations: ['level'],
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+  }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {

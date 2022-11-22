@@ -34,7 +34,7 @@ export class CategoryController {
     };
   }
 
-  @Get()
+  @Get('getall')
   async findAll() {
     const [data, count] = await this.categoryService.findAll();
 
@@ -64,7 +64,7 @@ export class CategoryController {
     );
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.categoryService.findOne(id),
@@ -73,7 +73,7 @@ export class CategoryController {
     };
   }
 
-  @Put(':id')
+  @Put('update/:id')
   async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -85,7 +85,7 @@ export class CategoryController {
     };
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.categoryService.remove(id);
 

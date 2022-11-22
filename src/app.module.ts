@@ -76,11 +76,11 @@ import { UsersModule } from './user/users.module';
       },
       inject: [ConfigService],
     }),
-    UsersModule,
-    HealthModule,
     LevelModule,
+    UsersModule,
     ArticleModule,
     CategoryModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

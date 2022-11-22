@@ -34,7 +34,7 @@ export class UsersController {
     };
   }
 
-  @Get()
+  @Get('getall')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -46,15 +46,6 @@ export class UsersController {
       limit,
       route: 'http://localhost:3222/user',
     });
-  }
-
-  @Get(':id')
-  async findById(@Param('id', ParseUUIDPipe) id: string) {
-    return {
-      data: await this.usersService.findById(id),
-      statusCode: HttpStatus.OK,
-      message: 'success',
-    };
   }
 
   @Get('search')
@@ -75,7 +66,16 @@ export class UsersController {
     );
   }
 
-  @Put(':id')
+  @Get('get/:id')
+  async findById(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      data: await this.usersService.findById(id),
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
+  }
+
+  @Put('update/:id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -87,7 +87,7 @@ export class UsersController {
     };
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.usersService.remove(id);
 
