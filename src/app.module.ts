@@ -10,6 +10,7 @@ import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import configuration from './config/configuration';
 import { UsersModule } from './user/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { UsersModule } from './user/users.module';
     ArticleModule,
     CategoryModule,
     HealthModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

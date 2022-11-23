@@ -47,7 +47,9 @@ export class UsersService {
     options: IPaginationOptions,
     search: string,
     ): Promise<Pagination<User>> {
-      const query = this.usersRepository.createQueryBuilder('user').innerJoinAndSelect('user.level', 'level');
+      const query = this.usersRepository.createQueryBuilder('user')
+      .innerJoinAndSelect('user.level', 'level')
+      .orderBy('user.username', 'ASC');
 
       if (search) {
  (
