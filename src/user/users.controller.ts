@@ -25,7 +25,7 @@ import { User } from './entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('create')
+  @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return {
       data: await this.usersService.create(createUserDto),
@@ -34,21 +34,21 @@ export class UsersController {
     };
   }
 
-  @Get('getall')
-  async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-  ): Promise<Pagination<User>> {
-    limit = limit > 100 ? 100 : limit;
+  // @Get()
+  // async findAll(
+  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+  //   @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  // ): Promise<Pagination<User>> {
+  //   limit = limit > 100 ? 100 : limit;
 
-    return this.usersService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3222/user',
-    });
-  }
+  //   return this.usersService.findAll({
+  //     page,
+  //     limit,
+  //     route: 'http://localhost:3222/user',
+  //   });
+  // }
 
-  @Get('search')
+  @Get()
   async findUsername(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -56,17 +56,24 @@ export class UsersController {
   ): Promise<Pagination<User>> {
     limit = limit > 100 ? 100 : limit;
 
-    return this.usersService.findUsername(
-      {
+    return (
+      this.usersService.findUsername(
+        {
+          page,
+          limit,
+          route: 'http://localhost:3222/user',
+        },
+        search,
+      ) ||
+      this.usersService.findAll({
         page,
         limit,
-        route: 'http://localhost:3222/user/search',
-      },
-      search,
+        route: 'http://localhost:3222/user',
+      })
     );
   }
 
-  @Get('get/:id')
+  @Get(':id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.usersService.findById(id),
@@ -75,7 +82,7 @@ export class UsersController {
     };
   }
 
-  @Put('update/:id')
+  @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -87,7 +94,7 @@ export class UsersController {
     };
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.usersService.remove(id);
 

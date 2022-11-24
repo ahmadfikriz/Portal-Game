@@ -11,7 +11,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username, password) {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.validateUser(username);
 
     if (user) {
       const valid = await this.usersService.compare(password, user.password);
@@ -30,8 +30,8 @@ export class AuthService {
     const dataToken = {
       userID: user.id,
       username: user.username,
-      // levelID: user.level.id,
-      // levelname: user.level.name,
+      levelID: user.level.id,
+      levelname: user.level.name,
     };
     const token = this.jwtService.sign(dataToken);
 

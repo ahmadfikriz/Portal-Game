@@ -25,7 +25,7 @@ import { Article } from './entities/article.entity';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  @Post('create')
+  @Post()
   async create(@Body() createArticleDto: CreateArticleDto) {
     return {
       data: await this.articleService.create(createArticleDto),
@@ -34,21 +34,21 @@ export class ArticleController {
     };
   }
 
-  @Get('getall')
-  async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-  ): Promise<Pagination<Article>> {
-    limit = limit > 100 ? 100 : limit;
+  // @Get()
+  // async findAll(
+  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+  //   @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  // ): Promise<Pagination<Article>> {
+  //   limit = limit > 100 ? 100 : limit;
 
-    return this.articleService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3222/article',
-    });
-  }
+  //   return this.articleService.findAll({
+  //     page,
+  //     limit,
+  //     route: 'http://localhost:3222/article',
+  //   });
+  // }
 
-  @Get('search')
+  @Get()
   async findArticle(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -56,17 +56,24 @@ export class ArticleController {
   ): Promise<Pagination<Article>> {
     limit = limit > 100 ? 100 : limit;
 
-    return this.articleService.findArticle(
-      {
+    return (
+      this.articleService.findArticle(
+        {
+          page,
+          limit,
+          route: 'http://localhost:3222/article',
+        },
+        search,
+      ) ||
+      this.articleService.findAll({
         page,
         limit,
-        route: 'http://localhost:3222/article/search',
-      },
-      search,
+        route: 'http://localhost:3222/article',
+      })
     );
   }
 
-  @Get('get/:id')
+  @Get(':id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.articleService.findById(id),
@@ -75,7 +82,7 @@ export class ArticleController {
     };
   }
 
-  @Put('update/:id')
+  @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -87,7 +94,7 @@ export class ArticleController {
     };
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.articleService.remove(id);
 

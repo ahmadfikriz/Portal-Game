@@ -177,4 +177,11 @@ async findByUsername(username: string) {
     }
   }
 }
+
+async validateUser(username) {
+  return await this.usersRepository.createQueryBuilder('user')
+  .leftJoinAndSelect('user.level', 'level')
+  .where('username = :username', {username:username})
+  .getOne();
+}
 }

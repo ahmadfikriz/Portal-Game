@@ -25,7 +25,7 @@ import { Category } from './entities/category.entity';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post('create')
+  @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return {
       data: await this.categoryService.create(createCategoryDto),
@@ -34,19 +34,19 @@ export class CategoryController {
     };
   }
 
-  @Get('getall')
-  async findAll() {
-    const [data, count] = await this.categoryService.findAll();
+  // @Get()
+  // async findAll() {
+  //   const [data, count] = await this.categoryService.findAll();
 
-    return {
-      data,
-      count,
-      statusCode: HttpStatus.OK,
-      message: 'success',
-    };
-  }
+  //   return {
+  //     data,
+  //     count,
+  //     statusCode: HttpStatus.OK,
+  //     message: 'success',
+  //   };
+  // }
 
-  @Get('search')
+  @Get()
   async findCategory(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -54,26 +54,33 @@ export class CategoryController {
   ): Promise<Pagination<Category>> {
     limit = limit > 100 ? 100 : limit;
 
-    return this.categoryService.findCategory(
-      {
+    return (
+      this.categoryService.findCategory(
+        {
+          page,
+          limit,
+          route: 'http://localhost:3222/category',
+        },
+        search,
+      ) ||
+      this.categoryService.findAll({
         page,
         limit,
-        route: 'http://localhost:3222/category/search',
-      },
-      search,
+        route: 'http://localhost:3222/category',
+      })
     );
   }
 
-  @Get('get/:id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @Get(':id')
+  async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {
-      data: await this.categoryService.findOne(id),
+      data: await this.categoryService.findById(id),
       statusCode: HttpStatus.OK,
       message: 'success',
     };
   }
 
-  @Put('update/:id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -85,7 +92,7 @@ export class CategoryController {
     };
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.categoryService.remove(id);
 

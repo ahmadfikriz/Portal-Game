@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 
-  @Post('create')
+  @Post()
   async create(@Body() createLevelDto: CreateLevelDto) {
     return {
       data: await this.levelService.create(createLevelDto),
@@ -28,7 +28,7 @@ export class LevelController {
     };
   }
 
-  @Get('getall')
+  @Get()
   async findAll() {
     const [data, count] = await this.levelService.findAll();
 
@@ -40,7 +40,7 @@ export class LevelController {
     };
   }
 
-  @Get('get/:id')
+  @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return {
       data: await this.levelService.findOne(id),
@@ -49,7 +49,7 @@ export class LevelController {
     };
   }
 
-  @Put('update/:id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateLevelDto: UpdateLevelDto,
@@ -61,7 +61,7 @@ export class LevelController {
     };
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.levelService.remove(id);
 

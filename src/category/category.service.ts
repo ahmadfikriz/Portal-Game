@@ -27,8 +27,12 @@ export class CategoryService {
     });
   }
 
-  findAll() {
-    return this.categoryRepository.findAndCount();
+  async findAll(options: IPaginationOptions): Promise<Pagination<Category>> {
+    const query = this.categoryRepository
+      .createQueryBuilder('category')
+      .orderBy('category.name', 'ASC');
+
+    return paginate<Category>(query, options);
   }
 
   async findCategory(
@@ -48,7 +52,7 @@ export class CategoryService {
     return paginate<Category>(query, options);
   }
 
-  async findOne(id: string) {
+  async findById(id: string) {
     try {
       return await this.categoryRepository.findOneOrFail({
         where: {
