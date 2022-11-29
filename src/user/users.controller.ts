@@ -19,6 +19,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { User } from './entities/user.entity';
+import { EditPasswordDto } from './dto/edit-password.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -89,6 +90,18 @@ export class UsersController {
   ) {
     return {
       data: await this.usersService.update(id, updateUserDto),
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
+  }
+
+  @Put('password/:id')
+  async updatePassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() editPasswordDto: EditPasswordDto,
+  ) {
+    return {
+      data: await this.usersService.updatePassword(id, editPasswordDto),
       statusCode: HttpStatus.OK,
       message: 'success',
     };

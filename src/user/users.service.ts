@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import * as bcrypt from 'bcrypt';
+import { EditPasswordDto } from './dto/edit-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -121,6 +122,38 @@ export class UsersService {
       },
     });
   }
+
+  async updatePassword(id: string, editPasswordDto: EditPasswordDto) {
+    await this.usersRepository.findOneOrFail({
+where: {
+      id: id,
+    },
+  });
+
+  if (editPasswordDto.password === editPasswordDto.confirm_password) {
+    const salt = await bcrypt.genSalt();
+    const passwordBaru = await bcrypt.hash(editPasswordDto.password, salt);
+    const data = await this.usersRepository.findOneOrFail({
+      where: {
+        id: id,
+      },
+    });
+
+    data.password = passwordBaru;
+
+    await this.usersRepository.update({id}, data);
+
+    return await this.usersRepository.findOneOrFail({where: {id}});
+  }
+
+    throw new HttpException(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        error: 'Password Harus Sama',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+}
 
   async remove(id: string) {
     try {
