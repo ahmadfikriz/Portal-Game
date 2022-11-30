@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateArticleDto {
   @ApiProperty({ required: true })
@@ -14,8 +14,8 @@ export class CreateArticleDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ format: 'binary' })
+  @IsOptional()
   thumbnail: string;
 
   @ApiProperty({ required: true })
