@@ -1,20 +1,27 @@
 /* eslint-disable no-param-reassign */
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
-  Delete,
-  HttpStatus,
-  ParseUUIDPipe,
+  Controller,
   DefaultValuePipe,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
   ParseIntPipe,
-  Query,
+  ParseUUIDPipe,
+  Post,
   Put,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { extname } from 'path';
+import { JwtGuard } from 'src/auth/jwt.guard';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -26,13 +33,43 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateCategoryDto })
+  @UseInterceptors(
+    FileInterceptor('icon', {
+      storage: diskStorage({
+        destination: './uploads/icon',
+        filename: (req: any, file, icon) => {
+          const fileName = [req.user.id, Date.now()].join('-');
+
+          icon(null, fileName + extname(file.originalname));
+        },
+      }),
+    }),
+  )
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @UploadedFile() icon: Express.Multer.File,
+  ) {
+    createCategoryDto.icon = icon.filename;
+
     return {
       data: await this.categoryService.create(createCategoryDto),
       statusCode: HttpStatus.CREATED,
       message: 'success',
     };
   }
+
+  // @Post()
+  // async create(@Body() createCategoryDto: CreateCategoryDto) {
+  //   return {
+  //     data: await this.categoryService.create(createCategoryDto),
+  //     statusCode: HttpStatus.CREATED,
+  //     message: 'success',
+  //   };
+  // }
 
   // @Get()
   // async findAll() {
