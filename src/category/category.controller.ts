@@ -40,7 +40,7 @@ export class CategoryController {
   @UseInterceptors(
     FileInterceptor('icon', {
       storage: diskStorage({
-        destination: './uploads/icon',
+        destination: './file',
         filename: (req: any, file, icon) => {
           const fileName = [req.user.id, Date.now()].join('-');
 

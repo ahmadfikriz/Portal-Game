@@ -40,7 +40,7 @@ export class ArticleController {
   @UseInterceptors(
     FileInterceptor('thumbnail', {
       storage: diskStorage({
-        destination: './uploads/thumbnail',
+        destination: './file',
         filename: (req: any, file, thumbnail) => {
           const fileName = [req.user.id, Date.now()].join('-');
 

@@ -11,6 +11,7 @@ import { CategoryModule } from './category/category.module';
 import configuration from './config/configuration';
 import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
+import { FileModule } from './file-handler/file.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { AuthModule } from './auth/auth.module';
     CategoryModule,
     HealthModule,
     AuthModule,
+    FileModule,
   ],
 })
 export class AppModule {}
