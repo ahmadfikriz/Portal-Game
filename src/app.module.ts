@@ -11,7 +11,8 @@ import { CategoryModule } from './category/category.module';
 import configuration from './config/configuration';
 import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
-import { FileModule } from './file-handler/file.module';
+import { FileModule } from './helper/file.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { FileModule } from './file-handler/file.module';
     HealthModule,
     AuthModule,
     FileModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
