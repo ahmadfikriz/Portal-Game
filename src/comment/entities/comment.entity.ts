@@ -42,6 +42,6 @@ export class Comment {
   @ManyToOne(() => Article, (article) => article.id)
   article: Article;
 
-  // @ManyToOne(() => Comment, (comment) => comment.id)
-  // comments: Comment;
+  @ManyToOne(() => Comment, (comment) => comment.id)
+  comments: Comment;
 }
