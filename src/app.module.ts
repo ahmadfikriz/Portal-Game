@@ -13,6 +13,7 @@ import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
 import { FileModule } from './helper/file.module';
 import { CommentModule } from './comment/comment.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { CommentModule } from './comment/comment.module';
     AuthModule,
     FileModule,
     CommentModule,
+    NewsletterModule,
   ],
 })
 export class AppModule {}
