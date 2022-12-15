@@ -9,9 +9,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-// import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
-import { string } from 'joi';
+import { CreateNewsletterDto } from './dto/create-newsletter.dto';
 import { UpdateNewsletterDto } from './dto/update-newsletter.dto';
 import { NewsletterService } from './newsletter.service';
 
@@ -23,20 +22,31 @@ export class NewsletterController {
     private mailService: MailerService,
   ) {}
 
-  @Get()
-  async newsletter(@Query('email') email) {
-    await this.mailService.sendMail({
-      to: email,
-      from: 'afz55.lovers@gmail.com',
-      subject: 'Newsletter',
-      text: 'Welcome',
-    });
-    return 'success';
+  @Post()
+  async newsletter(@Body() createNewsletterDto: CreateNewsletterDto) {
+    try {
+      return {
+        data: await this.newsletterService.newsletter(createNewsletterDto),
+        statusCode: 200,
+        message: 'berhasil',
+      };
+    } catch (error) {
+      return {
+        message: 'error',
+        error,
+      };
+    }
   }
 
-  // @Post()
-  // async newsletter(@Body() data: any): Promise<void> {
-  //   await this.newsletterService.newsletter(data.email);
+  // @Get()
+  // async newsletter(@Query('email') email) {
+  //   await this.mailService.sendMail({
+  //     to: email,
+  //     from: 'afz55.lovers@gmail.com',
+  //     subject: 'Newsletter',
+  //     text: 'Welcome',
+  //   });
+  //   return 'success';
   // }
 
   @Get()

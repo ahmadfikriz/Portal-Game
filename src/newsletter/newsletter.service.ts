@@ -15,28 +15,24 @@ export class NewsletterService {
   ) {}
 
   async newsletter(createNewsletterDto: CreateNewsletterDto) {
-    try {
-      const newsletter = new Newsletter();
+    const newsletter = new Newsletter();
 
-      newsletter.email = createNewsletterDto.email;
+    newsletter.email = createNewsletterDto.email;
 
-      const result = await this.newsletterRepository.insert(newsletter);
+    const result = await this.newsletterRepository.insert(newsletter);
 
-      await this.mailService.sendMail({
-        to: createNewsletterDto.email,
-        from: 'afz55.lovers@gmail.com',
-        subject: 'Newsletter',
-        text: 'Welcome',
-      });
+    await this.mailService.sendMail({
+      to: createNewsletterDto.email,
+      from: 'afz55.lovers@gmail.com',
+      subject: 'Newsletter',
+      text: 'Welcome',
+    });
 
-      return this.newsletterRepository.findOneOrFail({
-        where: {
-          id: result.identifiers[0].id,
-        },
-      });
-    } catch (error) {
-      // Tambahkan logika untuk menangani kesalahan di sini
-    }
+    return this.newsletterRepository.findOneOrFail({
+      where: {
+        id: result.identifiers[0].id,
+      },
+    });
   }
 
   findAll() {
