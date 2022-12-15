@@ -19,10 +19,7 @@ export class CommentService {
     private articleRepository: Repository<Article>,
   ) {}
 
-  async create(createCommentDto: CreateCommentDto) {
-    const user: any = await this.usersRepository.findOneOrFail({
-      where: { id: createCommentDto.user_id },
-    });
+  async create(createCommentDto: CreateCommentDto, user: User) {
     const article: any = await this.articleRepository.findOneOrFail({
       where: { id: createCommentDto.article_id },
     });
@@ -43,10 +40,7 @@ export class CommentService {
     });
   }
 
-  async reply(replyCommentDto: ReplyCommentDto) {
-    const user_id: any = await this.usersRepository.findOneOrFail({
-      where: { id: replyCommentDto.user_id },
-    });
+  async reply(replyCommentDto: ReplyCommentDto, user: User) {
     const article_id: any = await this.articleRepository.findOneOrFail({
       where: { id: replyCommentDto.article_id },
     });
@@ -56,7 +50,7 @@ export class CommentService {
 
     const newComment = new Comment();
 
-    newComment.user = user_id;
+    newComment.user = user;
     newComment.article = article_id;
     newComment.comments = comment_id;
     newComment.comment = replyCommentDto.comment;

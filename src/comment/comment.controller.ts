@@ -6,8 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/jwt.guard';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ReplyCommentDto } from './dto/reply-comment.dto';
@@ -19,10 +22,13 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
-  async create(@Body() createCommentDto: CreateCommentDto) {
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  async create(@Body() createCommentDto: CreateCommentDto, @Request() req) {
+    const user = req.user;
     try {
       return {
-        data: await this.commentService.create(createCommentDto),
+        data: await this.commentService.create(createCommentDto, user),
         statusCode: 200,
         message: 'berhasil',
       };
@@ -35,10 +41,13 @@ export class CommentController {
   }
 
   @Post('reply')
-  async reply(@Body() replyCommentDto: ReplyCommentDto) {
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  async reply(@Body() replyCommentDto: ReplyCommentDto, @Request() req) {
+    const user = req.user;
     try {
       return {
-        data: await this.commentService.reply(replyCommentDto),
+        data: await this.commentService.reply(replyCommentDto, user),
         statusCode: 200,
         message: 'berhasil',
       };
