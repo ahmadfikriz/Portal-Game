@@ -13,7 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer/dist';
         host: 'smtp.sendgrid.net',
         auth: {
           user: 'apikey',
-          pass: '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',
+          pass: process.env.PASS_SENDGRID,
         },
       },
     }),

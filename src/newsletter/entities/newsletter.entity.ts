@@ -4,8 +4,10 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  Entity,
 } from 'typeorm';
 
+@Entity()
 export class Newsletter {
   @PrimaryGeneratedColumn('uuid')
   id: string;
