@@ -12,9 +12,11 @@ export class AuthService {
 
   async validateUser(username, password) {
     const user = await this.usersService.validateUser(username);
+    console.log('user:', user);
 
     if (user) {
       const valid = await this.usersService.compare(password, user.password);
+      console.log('valid:', valid);
 
       if (valid) {
         return user;
@@ -27,6 +29,7 @@ export class AuthService {
   }
 
   generateToken(user: User) {
+    console.log('user:', user);
     const dataToken = {
       userID: user.id,
       username: user.username,
@@ -34,6 +37,7 @@ export class AuthService {
       levelname: user.level.name,
     };
     const token = this.jwtService.sign(dataToken);
+    console.log('token:', token);
 
     return { token: token };
   }

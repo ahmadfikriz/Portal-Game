@@ -22,6 +22,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const newUser = new User();
 
+    newUser.email = createUserDto.email;
     newUser.username = createUserDto.username;
     newUser.password = createUserDto.password;
     newUser.level = await this.levelService.findByLevel(createUserDto.levels);

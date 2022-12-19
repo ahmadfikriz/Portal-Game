@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
@@ -22,6 +23,7 @@ export class ArticleService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private categoryService: CategoryService,
+    private mailService: MailerService,
   ) {}
 
   async create(createArticleDto: CreateArticleDto) {
@@ -30,11 +32,21 @@ export class ArticleService {
     newArticle.title = createArticleDto.title;
     newArticle.thumbnail = createArticleDto.thumbnail;
     newArticle.content = createArticleDto.content;
-    newArticle.viewers = createArticleDto.viewers;
     newArticle.user = await this.usersService.findByUsername(createArticleDto.username);
     newArticle.category = await this.categoryService.findByCategory(createArticleDto.categories);
 
     const result = await this.articleRepository.insert(newArticle);
+
+    const emails = await this.usersRepository.find({ select: ['email'] });
+
+    for (const email of emails) {
+      await this.mailService.sendMail({
+        to: email.email,
+        from: 'afz55.lovers@gmail.com',
+        subject: 'Newsletter',
+        text: 'Pemberitahuan Artikel Baru',
+      });
+    }
 
     return this.articleRepository.findOneOrFail({
       where: {

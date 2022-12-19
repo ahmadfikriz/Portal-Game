@@ -24,7 +24,7 @@ export class Article {
   @Column()
   content: string;
 
-  @Column()
+  @Column({ nullable: true })
   viewers: number;
 
   @CreateDateColumn({

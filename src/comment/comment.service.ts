@@ -20,6 +20,7 @@ export class CommentService {
   ) {}
 
   async create(createCommentDto: CreateCommentDto, user: User) {
+    console.log('user:', user);
     const article: any = await this.articleRepository.findOneOrFail({
       where: { id: createCommentDto.article_id },
     });
@@ -29,8 +30,10 @@ export class CommentService {
     newComment.user = user;
     newComment.article = article;
     newComment.comment = createCommentDto.comment;
+    console.log('newComment:', newComment);
 
     const result = await this.commentRepository.insert(newComment);
+    console.log('result:', result);
 
     return this.commentRepository.findOneOrFail({
       where: {
