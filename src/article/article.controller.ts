@@ -139,4 +139,9 @@ export class ArticleController {
       message: 'success',
     };
   }
+
+  @Get('view/:id')
+  async viewArticle(@Param('id') id: string): Promise<Article> {
+    return this.articleService.viewArticle(id);
+  }
 }

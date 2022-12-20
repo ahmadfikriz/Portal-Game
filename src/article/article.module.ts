@@ -7,10 +7,11 @@ import { User } from 'src/user/entities/user.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { UsersModule } from 'src/user/users.module';
 import { CategoryModule } from 'src/category/category.module';
+import { Newsletter } from 'src/newsletter/entities/newsletter.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Article, User, Category]),
+    TypeOrmModule.forFeature([Article, User, Category, Newsletter]),
     UsersModule,
     CategoryModule,
   ],

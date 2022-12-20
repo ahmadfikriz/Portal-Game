@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { CategoryService } from 'src/category/category.service';
 import { Category } from 'src/category/entities/category.entity';
+import { Newsletter } from 'src/newsletter/entities/newsletter.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UsersService } from 'src/user/users.service';
 import { EntityNotFoundError, Repository } from 'typeorm';
@@ -20,6 +21,8 @@ export class ArticleService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private usersService: UsersService,
+    @InjectRepository(Newsletter)
+    private newsletterRepository: Repository<Newsletter>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private categoryService: CategoryService,
@@ -37,7 +40,7 @@ export class ArticleService {
 
     const result = await this.articleRepository.insert(newArticle);
 
-    const emails = await this.usersRepository.find({ select: ['email'] });
+    const emails = await this.newsletterRepository.find({ select: ['email'] });
 
     for (const email of emails) {
       await this.mailService.sendMail({
@@ -165,5 +168,18 @@ relations: ['user', 'category'],
     }
 
     await this.articleRepository.delete(id);
+  }
+
+  async viewArticle(id: string): Promise<Article> {
+    // mengambil artikel yang akan dilihat
+    const article = await this.articleRepository.findOne({ where: { id } });
+
+    // menambahkan 1 pada jumlah pengunjung
+    article.viewers++;
+
+    // menyimpan perubahan ke dalam database
+    await this.articleRepository.save(article);
+
+    return article;
   }
 }

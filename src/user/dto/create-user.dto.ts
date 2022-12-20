@@ -18,4 +18,8 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  newsletter: boolean;
 }

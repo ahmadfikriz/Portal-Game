@@ -10,12 +10,15 @@ import { LevelService } from 'src/level/level.service';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import * as bcrypt from 'bcrypt';
 import { EditPasswordDto } from './dto/edit-password.dto';
+import { Newsletter } from 'src/newsletter/entities/newsletter.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Newsletter)
+    private newsletterRepository: Repository<Newsletter>,
     private levelService: LevelService,
   ) {}
 
@@ -28,6 +31,13 @@ export class UsersService {
     newUser.level = await this.levelService.findByLevel(createUserDto.levels);
 
     const result = await this.usersRepository.insert(newUser);
+
+    if (createUserDto.newsletter) {
+      const newsletter = new Newsletter();
+
+      newsletter.email = createUserDto.email;
+      await this.newsletterRepository.insert(newsletter);
+    }
 
     return this.usersRepository.findOneOrFail({
       where: {
