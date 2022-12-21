@@ -8,8 +8,10 @@ import {
   CreateDateColumn,
   ManyToOne,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 
 @Entity()
 export class User {
@@ -45,6 +47,9 @@ export class User {
 
   @ManyToOne(() => Level, (level) => level.id)
   level: Level;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.id)
+  favoriteArticles: Favorite;
 
   static password: any;
   static id: any;

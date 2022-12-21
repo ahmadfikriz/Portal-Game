@@ -1,4 +1,5 @@
 import { Category } from 'src/category/entities/category.entity';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -50,4 +52,7 @@ export class Article {
 
   @ManyToOne(() => User, (user) => user.id)
   user: User;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.id)
+  favoriteArticles: Favorite;
 }

@@ -11,6 +11,7 @@ import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginat
 import * as bcrypt from 'bcrypt';
 import { EditPasswordDto } from './dto/edit-password.dto';
 import { Newsletter } from 'src/newsletter/entities/newsletter.entity';
+import { Article } from 'src/article/entities/article.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(Newsletter)
     private newsletterRepository: Repository<Newsletter>,
+    @InjectRepository(Article)
+    private articleRepository: Repository<Article>,
     private levelService: LevelService,
   ) {}
 
@@ -227,5 +230,5 @@ async validateUser(username) {
   .leftJoinAndSelect('user.level', 'level')
   .where('username = :username', {username:username})
   .getOne();
-}
+ }
 }

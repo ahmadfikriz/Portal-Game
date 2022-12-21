@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { FileModule } from './helper/file.module';
 import { CommentModule } from './comment/comment.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -89,6 +90,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     FileModule,
     CommentModule,
     NewsletterModule,
+    FavoriteModule,
   ],
 })
 export class AppModule {}

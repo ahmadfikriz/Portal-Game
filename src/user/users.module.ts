@@ -6,9 +6,13 @@ import { User } from './entities/user.entity';
 import { Level } from 'src/level/entities/level.entity';
 import { LevelModule } from 'src/level/level.module';
 import { Newsletter } from 'src/newsletter/entities/newsletter.entity';
+import { Article } from 'src/article/entities/article.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Level, Newsletter]), LevelModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Level, Article, Newsletter]),
+    LevelModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
