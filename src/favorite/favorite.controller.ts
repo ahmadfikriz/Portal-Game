@@ -24,10 +24,16 @@ export class FavoriteController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  async addToFavorites(@Body() createFavoriteDto: CreateFavoriteDto, @Req() user: User) {
+  async addToFavorites(
+    @Body() createFavoriteDto: CreateFavoriteDto,
+    @Req() user: User,
+  ) {
     try {
       return {
-        data: await this.favoriteService.addToFavorites(createFavoriteDto, user),
+        data: await this.favoriteService.addToFavorites(
+          createFavoriteDto,
+          user,
+        ),
         statusCode: 200,
         message: 'berhasil',
       };

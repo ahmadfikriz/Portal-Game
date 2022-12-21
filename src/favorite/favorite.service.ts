@@ -18,10 +18,7 @@ export class FavoriteService {
     private articleRepository: Repository<Article>,
   ) {}
 
-  async addToFavorites(
-    createFavoriteDto: CreateFavoriteDto,
-    userLogin: User,
-  ): Promise<void> {
+  async addToFavorites(createFavoriteDto: CreateFavoriteDto, userLogin: User) {
     const user = await this.usersRepository.findOne({
       where: { id: userLogin.id },
     });
@@ -33,7 +30,14 @@ export class FavoriteService {
 
     favoriteArticle.user = user;
     favoriteArticle.article = article;
-    await this.favoriteRepository.save(favoriteArticle);
+    const result = await this.favoriteRepository.save(favoriteArticle);
+
+    return this.favoriteRepository.findOneOrFail({
+      where: {
+        id: result.id,
+      },
+      relations: ['user', 'article'],
+    });
   }
 
   findAll() {
