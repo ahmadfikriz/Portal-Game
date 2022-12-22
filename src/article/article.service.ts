@@ -47,7 +47,7 @@ export class ArticleService {
         to: email.email,
         from: 'afz55.lovers@gmail.com',
         subject: 'Newsletter',
-        text: 'Pemberitahuan Artikel Baru',
+        text: `Pemberitahuan Artikel Baru: ${`http://localhost:3222/article/`}${result.identifiers[0].id}`,
       });
     }
 
