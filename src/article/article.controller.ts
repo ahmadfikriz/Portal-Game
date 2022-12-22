@@ -109,6 +109,20 @@ export class ArticleController {
     );
   }
 
+  @Get('recommendation')
+  async recommendation(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<Article>> {
+    limit = limit > 100 ? 100 : limit;
+
+    return this.articleService.recommendation({
+      page,
+      limit,
+      route: 'http://localhost:3222/article/recommendation',
+    });
+  }
+
   @Get(':id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return {

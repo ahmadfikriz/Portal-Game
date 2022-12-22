@@ -59,7 +59,7 @@ relations: ['user', 'category'],
     });
   }
 
-  findAll(options: IPaginationOptions): Promise<Pagination<Article>> {
+  async findAll(options: IPaginationOptions): Promise<Pagination<Article>> {
     const query = this.articleRepository.createQueryBuilder('article')
     .innerJoinAndSelect('article.user', 'user')
     .innerJoinAndSelect('article.category', 'category')
@@ -89,6 +89,15 @@ relations: ['user', 'category'],
 
 ;
     await query.getMany();
+
+    return paginate<Article>(query, options);
+  }
+
+  async recommendation(options: IPaginationOptions): Promise<Pagination<Article>> {
+    const query = this.articleRepository.createQueryBuilder('article')
+    .innerJoinAndSelect('article.user', 'user')
+    .innerJoinAndSelect('article.category', 'category')
+    .orderBy('article.viewers', 'DESC');
 
     return paginate<Article>(query, options);
   }
