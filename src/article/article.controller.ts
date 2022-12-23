@@ -15,6 +15,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -22,6 +23,7 @@ import { diskStorage } from 'multer';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { extname } from 'path';
 import { JwtGuard } from 'src/auth/jwt.guard';
+import { User } from 'src/user/entities/user.entity';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -51,12 +53,13 @@ export class ArticleController {
   )
   async create(
     @Body() createArticleDto: CreateArticleDto,
+    @Req() user: User,
     @UploadedFile() thumbnail: Express.Multer.File,
   ) {
     createArticleDto.thumbnail = thumbnail.filename;
 
     return {
-      data: await this.articleService.create(createArticleDto),
+      data: await this.articleService.create(createArticleDto, user),
       statusCode: HttpStatus.CREATED,
       message: 'success',
     };

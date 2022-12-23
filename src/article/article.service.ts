@@ -29,13 +29,18 @@ export class ArticleService {
     private mailService: MailerService,
   ) {}
 
-  async create(createArticleDto: CreateArticleDto) {
+  async create(createArticleDto: CreateArticleDto, userLogin: User) {
+    const user: any = await this.usersRepository.findOne({
+      where: { id: userLogin.id },
+    });
+    console.log('user:', user);
+
     const newArticle = new Article();
 
     newArticle.title = createArticleDto.title;
     newArticle.thumbnail = createArticleDto.thumbnail;
     newArticle.content = createArticleDto.content;
-    newArticle.user = await this.usersService.findByUsername(createArticleDto.username);
+    newArticle.user = user;
     newArticle.category = await this.categoryService.findByCategory(createArticleDto.categories);
 
     const result = await this.articleRepository.insert(newArticle);
